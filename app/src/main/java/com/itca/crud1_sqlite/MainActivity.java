@@ -2,6 +2,8 @@ package com.itca.crud1_sqlite;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +11,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this, "administraciòn.db", null, 1);
 
     private EditText etcodigo, etdescripcion, etPrecio;
     private Button btnAlta, btnConsultaCodigo, btnConsultaDescripcion, btnEliminar, btnModificar, btnSalir, btnNuevo;
@@ -42,26 +46,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        SQLiteDatabase bd = admin.getWritableDatabase();
 
-        String codigo = etcodigo.getText().toString();
-        String  descripcion = etdescripcion.getText().toString();
-        String  precio = etPrecio.getText().toString();
 
-        if (codigo.isEmpty()) {
-            etcodigo.setError("campo obligatorio");
-        }else if (descripcion.isEmpty()){
-            etdescripcion.setError("campo obligatorio");
-        }else if (precio.isEmpty()) {
-            etPrecio.setError("campo obligatorio");
-        }else {
-            Toast.makeText(this, "Has superado la validaciò", Toast.LENGTH_SHORT);
-        }
 
         switch (view.getId()) {
             case R.id.btnAlta:
-                Toast.makeText(this, "has hecho clic en boton Alta", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "has hecho clic en boton Alta", Toast.LENGTH_SHORT).show();
+
+                String codigo = etcodigo.getText().toString();
+                String  descripcion = etdescripcion.getText().toString();
+                String  precio = etPrecio.getText().toString();
+                ContentValues registro = new ContentValues();
+                registro.put("codigo", codigo);
+                registro.put("descripcion", descripcion);
+                registro.put("precio", precio);
+                //bd.insert("articulos" , null, registro);
+
+                etcodigo.setText("");
+                etdescripcion.setText("");
+                etPrecio.setText("");
+                if (codigo.isEmpty()){
+                    etcodigo.setError("Campo Obligatorio");
+                }else if (descripcion.isEmpty()){
+                    etdescripcion.setError("Campo Obligatorio");
+                }else if (precio.isEmpty()){
+                    etPrecio.setError("Campo Obligatorio");
+                }else {
+                    bd.insert("articulos", null, registro);
+                    bd.close();
+                    etcodigo.setText(null);
+                    etdescripcion.setText(null);
+                    etPrecio.setText(null);
+                    Toast.makeText(this, "Registro guardado correctamente", Toast.LENGTH_SHORT).show();
+                }
+               break;
+
+
             case R.id.btnConsultaCodigo:
-                Toast.makeText(this, "has hecho clic en boton concultar por codigo", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "has hecho clic en boton concultar por codigo", Toast.LENGTH_SHORT).show();
+                codigo = etcodigo.getText().toString();
+                if(codigo.isEmpty()) {
+                    etcodigo.setError("campo obligatorio");
+
+                }else  {
+                    cursor fila =bd.rawQuery(sql:"selec")
+                }
+
+
             case R.id.btnConsultaDescripcion:
                 Toast.makeText(this, "has hecho clic en boton  consultar por descripcion", Toast.LENGTH_SHORT).show();
             case R.id.btnEliminar:
